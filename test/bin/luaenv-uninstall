@@ -2,11 +2,11 @@
 #
 # Summary: Fake uninstall program
 #
-# Usage: rbenv uninstall version
+# Usage: luaenv uninstall version
 #
 
 set -e
-[ -n "$RBENV_DEBUG" ] && set -x
+[ -n "$LUAENV_DEBUG" ] && set -x
 
 # Define `before_uninstall` and `after_uninstall` functions that allow
 # plugin hooks to register a string of code for execution before or
@@ -26,7 +26,7 @@ fi
 case "$1" in
 [0-9].*)
   VERSION_NAME=${1:?}
-  rm -rf "$RBENV_ROOT/versions/$1"
+  rm -rf "$LUAENV_ROOT/versions/$1"
   echo "Uninstalled fake version $1"
 
   echo Executing after_uninstall hooks.
@@ -34,6 +34,6 @@ case "$1" in
 
   ;;
 *)
-  echo 'Usage: rbenv-install version'
+  echo 'Usage: luaenv-install version'
   ;;
 esac

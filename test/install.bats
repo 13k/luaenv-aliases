@@ -2,36 +2,22 @@
 
 load test_helper
 
-@test "running rbenv-install auto installs an alias" {
-
-  run rbenv-install 2.1.5
+@test "running luaenv-install auto installs an alias" {
+  run luaenv-install 5.3.3
   assert_success
-  assert_line 'Installed fake version 2.1.5'
-  assert_line '2.1 => 2.1.5'
-  assert_alias_version 2.1 2.1.5
+  assert_line 'Installed fake version 5.3.3'
+  assert_line '5.3 => 5.3.3'
+  assert_alias_version 5.3 5.3.3
 
-  run rbenv-install 1.9.3-p123
+  run luaenv-install 5.3.4
   assert_success
-  assert_line 'Installed fake version 1.9.3-p123'
-  assert_line '1.9.3 => 1.9.3-p123'
-  assert_alias_version 1.9.3 1.9.3-p123
+  assert_line 'Installed fake version 5.3.4'
+  assert_line '5.3 => 5.3.4'
+  assert_alias_version 5.3 5.3.4
 
-  run rbenv-install 1.9.3-p99
+  run luaenv-install 5.3.5
   assert_success
-  assert_line 'Installed fake version 1.9.3-p99'
-  assert_alias_version 1.9.3 1.9.3-p123
-
-  run rbenv-install 1.9.3-p200
-  assert_success
-  assert_line 'Installed fake version 1.9.3-p200'
-  assert_line '1.9.3 => 1.9.3-p200'
-  assert_alias_version 1.9.3 1.9.3-p200
-
-  run rbenv-install 1.9.3-p456-perf
-  assert_success
-  assert_line 'Installed fake version 1.9.3-p456-perf'
-  assert_line '1.9.3 => 1.9.3-p456-perf'
-  assert_line '1.9.3-p456 => 1.9.3-p456-perf'
-  assert_alias_version 1.9.3 1.9.3-p456-perf
-  assert_alias_version 1.9.3-p456 1.9.3-p456-perf
+  assert_line 'Installed fake version 5.3.5'
+  assert_line '5.3 => 5.3.5'
+  assert_alias_version 5.3 5.3.5
 }

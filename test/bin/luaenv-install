@@ -2,11 +2,11 @@
 #
 # Summary: Fake install program
 #
-# Usage: rbenv install version
+# Usage: luaenv install version
 #
 
 set -e
-[ -n "$RBENV_DEBUG" ] && set -x
+[ -n "$LUAENV_DEBUG" ] && set -x
 
 # Define `before_install` and `after_install` functions that allow
 # plugin hooks to register a string of code for execution before or
@@ -18,8 +18,7 @@ after_install() {
   after_hooks["${#after_hooks[@]}"]="$hook"
 }
 
-if [ -n "$INSTALL_HOOK" ]
-then
+if [ -n "$INSTALL_HOOK" ]; then
   echo Sourcing "$INSTALL_HOOK"
   source "$INSTALL_HOOK"
 fi
@@ -29,9 +28,9 @@ STATUS=0
 case "$1" in
 [0-9].*)
   VERSION_NAME=$1
-  d="$RBENV_ROOT/versions/$1"
+  d="$LUAENV_ROOT/versions/$1"
   mkdir -p "$d"
-  echo $1 > "$d/RELEASE.txt"
+  echo $1 >"$d/RELEASE.txt"
   echo "Installed fake version $1"
   echo "into $d directory"
 
@@ -40,7 +39,7 @@ case "$1" in
 
   ;;
 *)
-  echo 'Usage: rbenv-install version'
+  echo 'Usage: luaenv-install version'
   ;;
 esac
 exit $STATUS

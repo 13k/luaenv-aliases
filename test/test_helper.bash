@@ -1,49 +1,51 @@
-unset RBENV_VERSION
-unset RBENV_DIR
+unset LUAENV_VERSION
+unset LUAENV_DIR
 
-RBENV_TEST_DIR="${BATS_TMPDIR}/rbenv"
-PLUGIN="${RBENV_TEST_DIR}/root/plugins/rbenv-aliases"
+LUAENV_TEST_DIR="${BATS_TMPDIR}/luaenv"
+PLUGIN="${LUAENV_TEST_DIR}/root/plugins/luaenv-aliases"
 
 # guard against executing this block twice due to bats internals
-if [ "$RBENV_ROOT" != "${RBENV_TEST_DIR}/root" ]; then
-  export RBENV_ROOT="${RBENV_TEST_DIR}/root"
-  export HOME="${RBENV_TEST_DIR}/home"
+if [ "$LUAENV_ROOT" != "${LUAENV_TEST_DIR}/root" ]; then
+  export LUAENV_ROOT="${LUAENV_TEST_DIR}/root"
+  export HOME="${LUAENV_TEST_DIR}/home"
   local parent
 
-  export INSTALL_HOOK="${BATS_TEST_DIRNAME}/../etc/rbenv.d/install/autoalias.bash"
-  export UNINSTALL_HOOK="${BATS_TEST_DIRNAME}/../etc/rbenv.d/uninstall/autoalias.bash"
+  export INSTALL_HOOK="${BATS_TEST_DIRNAME}/../etc/luaenv.d/install/autoalias.bash"
+  export UNINSTALL_HOOK="${BATS_TEST_DIRNAME}/../etc/luaenv.d/uninstall/autoalias.bash"
 
   PATH=/usr/bin:/bin:/usr/sbin:/sbin
-  PATH="${RBENV_TEST_DIR}/bin:$PATH"
+  PATH="${LUAENV_TEST_DIR}/bin:$PATH"
   PATH="${BATS_TEST_DIRNAME}/bin:$PATH"
   PATH="${BATS_TEST_DIRNAME}/../bin:$PATH"
-  PATH="${BATS_TEST_DIRNAME}/../rbenv/libexec:$PATH"
-  PATH="${BATS_TEST_DIRNAME}/../rbenv/test/libexec:$PATH"
-  PATH="${RBENV_ROOT}/shims:$PATH"
+  PATH="${BATS_TEST_DIRNAME}/../luaenv/libexec:$PATH"
+  PATH="${BATS_TEST_DIRNAME}/../luaenv/test/libexec:$PATH"
+  PATH="${LUAENV_ROOT}/shims:$PATH"
   export PATH
 fi
 
 teardown() {
-  rm -rf "$RBENV_TEST_DIR"
+  rm -rf "$LUAENV_TEST_DIR"
 }
 
 flunk() {
-  { if [ "$#" -eq 0 ]; then cat -
-    else echo "$@"
+  {
+    if [ "$#" -eq 0 ]; then
+      cat -
+    else
+      echo "$@"
     fi
-  } | sed "s:${RBENV_TEST_DIR}:TEST_DIR:g" >&2
+  } | sed "s:${LUAENV_TEST_DIR}:TEST_DIR:g" >&2
   return 1
 }
 
 # Creates fake version directories
 create_versions() {
-  for v in $*
-  do
+  for v in $*; do
     #echo "Created version: $d"
-    d="$RBENV_TEST_DIR/root/versions/$v"
+    d="$LUAENV_TEST_DIR/root/versions/$v"
     mkdir -p "$d/bin"
-    echo $v > "$d/RELEASE.txt"
-    ln -nfs /bin/echo "$d/bin/ruby"
+    echo $v >"$d/RELEASE.txt"
+    ln -nfs /bin/echo "$d/bin/lua"
   done
 }
 
@@ -52,28 +54,28 @@ create_alias() {
   local alias="$1"
   local version="$2"
 
-  mkdir -p "$RBENV_ROOT/versions"
-  ln -nfs "$RBENV_ROOT/versions/$version" "$RBENV_ROOT/versions/$alias"
+  mkdir -p "$LUAENV_ROOT/versions"
+  ln -nfs "$LUAENV_ROOT/versions/$version" "$LUAENV_ROOT/versions/$alias"
 }
 
 # assert_alias_version alias version
 
 assert_alias_version() {
-  if [ ! -f $RBENV_ROOT/versions/$1/RELEASE.txt ]
-  then
+  if [ ! -f $LUAENV_ROOT/versions/$1/RELEASE.txt ]; then
     echo "Versions:"
-    (cd $RBENV_ROOT/versions ; ls -l)
+    (
+      cd $LUAENV_ROOT/versions
+      ls -l
+    )
   fi
-  assert_equal "$2" "$(cat "$RBENV_ROOT/versions/$1/RELEASE.txt" 2>&1)"
+  assert_equal "$2" "$(cat "$LUAENV_ROOT/versions/$1/RELEASE.txt" 2>&1)"
 }
 
 assert_alias_missing() {
-  if [ -f $RBENV_ROOT/versions/$1/RELEASE.txt ]
-  then
-    assert_equal "no-version" "$(cat "$RBENV_ROOT/versions/$1/RELEASE.txt" 2>&1)"
+  if [ -f $LUAENV_ROOT/versions/$1/RELEASE.txt ]; then
+    assert_equal "no-version" "$(cat "$LUAENV_ROOT/versions/$1/RELEASE.txt" 2>&1)"
   fi
 }
-
 
 assert_success() {
   if [ "$status" -ne 0 ]; then
@@ -93,7 +95,8 @@ assert_failure() {
 
 assert_equal() {
   if [ "$1" != "$2" ]; then
-    { echo "expected: $1"
+    {
+      echo "expected: $1"
       echo "actual:   $2"
     } | flunk
   fi
@@ -101,8 +104,10 @@ assert_equal() {
 
 assert_output() {
   local expected
-  if [ $# -eq 0 ]; then expected="$(cat -)"
-  else expected="$1"
+  if [ $# -eq 0 ]; then
+    expected="$(cat -)"
+  else
+    expected="$1"
   fi
   assert_equal "$expected" "$output"
 }
